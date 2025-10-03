@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Bot, CheckCircle2, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function WaitlistPage() {
   const router = useRouter();
@@ -61,7 +62,6 @@ export default function WaitlistPage() {
         ? currentArray.filter(item => item !== value)
         : [...currentArray, value];
       
-      // Expectations için max 2 seçim
       if (field === 'expectations' && newArray.length > 2) {
         return prev;
       }
@@ -75,7 +75,6 @@ export default function WaitlistPage() {
     setIsSubmitting(true);
 
     try {
-      // n8n webhook'una POST isteği
       const response = await fetch(process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || '/api/waitlist', {
         method: 'POST',
         headers: {
@@ -133,7 +132,6 @@ export default function WaitlistPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Header */}
       <header className="sticky top-0 z-40 backdrop-blur border-b bg-background/70">
         <div className="container mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -144,12 +142,11 @@ export default function WaitlistPage() {
             <Badge className="ml-2" variant="secondary">Bekleme Listesi</Badge>
           </div>
           <Button asChild variant="outline">
-            <a href="/">Ana Sayfa</a>
+            <Link href="/">Ana Sayfa</Link>
           </Button>
         </div>
       </header>
 
-      {/* Form */}
       <div className="container mx-auto max-w-3xl px-6 py-12">
         <div className="text-center mb-10">
           <Badge className="mb-4" variant="outline">Erken Erişim</Badge>
@@ -166,7 +163,6 @@ export default function WaitlistPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* İletişim Bilgileri */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="contactPerson">İletişim Kişisi *</Label>
@@ -202,7 +198,6 @@ export default function WaitlistPage() {
                 />
               </div>
 
-              {/* İşletme Bilgileri */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="businessType">İşletme Türünüz *</Label>
@@ -259,7 +254,6 @@ export default function WaitlistPage() {
                 </Select>
               </div>
 
-              {/* Beklentiler */}
               <div className="space-y-3">
                 <Label>Bu sistemden beklediğiniz fayda nedir? * (En fazla 2 seçin)</Label>
                 <div className="space-y-2">
@@ -279,7 +273,6 @@ export default function WaitlistPage() {
                 <p className="text-xs text-muted-foreground">Seçilen: {formData.expectations.length}/2</p>
               </div>
 
-              {/* AI Özellikleri */}
               <div className="space-y-3">
                 <Label>Hangi yapay zeka özellikleri size en çekici geliyor? *</Label>
                 <div className="space-y-2">
@@ -297,7 +290,6 @@ export default function WaitlistPage() {
                 </div>
               </div>
 
-              {/* Düşünceler */}
               <div className="space-y-2">
                 <Label htmlFor="thoughts">Düşünceleriniz (Opsiyonel)</Label>
                 <Textarea
@@ -309,7 +301,6 @@ export default function WaitlistPage() {
                 />
               </div>
 
-              {/* Submit */}
               <div className="pt-4">
                 <Button
                   type="submit"
@@ -334,7 +325,6 @@ export default function WaitlistPage() {
           </CardContent>
         </Card>
 
-        {/* Faydalar */}
         <Card className="mt-8 bg-primary text-primary-foreground">
           <CardContent className="pt-6">
             <h3 className="font-semibold mb-3">Erken Erişim Avantajları:</h3>

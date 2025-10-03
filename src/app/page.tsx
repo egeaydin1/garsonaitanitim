@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Bot, QrCode, Phone } from "lucide-react";
+import Link from "next/link";
 
 // ---------- helpers ----------
 const fadeUp = {
@@ -42,33 +43,35 @@ const Section = ({ id, title, eyebrow, children, description }: SectionProps) =>
 
 // ---------- main component ----------
 export default function Site() {
-  const roi = {
-    monthlyCovers: 15000,
-    avgWage: 14,
-    waiterPerShift: 3,
-    shiftsPerDay: 2,
-    days: 30,
-    aiLic: 799,
-    upsellLift: 0.12,
-    avgTicket: 18,
-  };
+  const { humanCost, aiCost, upsellGain, netSavings, paybackDays, nf } = useMemo(() => {
+    const roi = {
+      monthlyCovers: 15000,
+      avgWage: 14,
+      waiterPerShift: 3,
+      shiftsPerDay: 2,
+      days: 30,
+      aiLic: 799,
+      upsellLift: 0.12,
+      avgTicket: 18,
+    };
 
-  const { humanCost, aiCost, upsellGain, netSavings, paybackDays } = useMemo(() => {
     const humanMonthly = roi.avgWage * (roi.waiterPerShift * 8) * roi.shiftsPerDay * roi.days;
     const aiMonthly = roi.aiLic;
     const upsell = roi.monthlyCovers * roi.avgTicket * roi.upsellLift;
     const savings = humanMonthly - aiMonthly + upsell;
     const payback = savings > 0 ? Math.max(7, Math.round((aiMonthly / savings) * 30)) : 0;
+    
+    const numberFormatter = new Intl.NumberFormat('en-US');
+
     return {
       humanCost: humanMonthly,
       aiCost: aiMonthly,
       upsellGain: upsell,
       netSavings: savings,
       paybackDays: payback,
+      nf: numberFormatter,
     };
-  }, [roi]);
-
-  const nf = useMemo(() => new Intl.NumberFormat('en-US'), []);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 text-foreground">
@@ -86,7 +89,7 @@ export default function Site() {
             <a href="#qr" className="hover:text-primary">QR Menü</a>
             <a href="#waiter" className="hover:text-primary">Yapay Zeka Garson</a>
             <a href="#analysis" className="hover:text-primary">Analizler</a>
-            <a href="/waitlist" className="hover:text-primary">Bekleme Listesi</a>
+            <Link href="/waitlist" className="hover:text-primary">Bekleme Listesi</Link>
             <a href="#contact" className="hover:text-primary">Teklif Al</a>
           </nav>
           <Button asChild>
@@ -194,7 +197,7 @@ export default function Site() {
           <div className="flex items-center gap-4 text-sm">
             <a href="#services" className="hover:text-primary">Hizmetler</a>
             <a href="#analysis" className="hover:text-primary">Analizler</a>
-            <a href="/waitlist" className="hover:text-primary">Bekleme Listesi</a>
+            <Link href="/waitlist" className="hover:text-primary">Bekleme Listesi</Link>
             <a href="#contact" className="hover:text-primary">İletişim</a>
           </div>
         </div>
