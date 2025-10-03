@@ -7,9 +7,8 @@ numReplicas = 1
 startCommand = "npm start"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
-
-[[deploy.healthcheckPath]]
-path = "/"
+healthcheckPath = "/"
+healthcheckTimeout = 100
 
 [env]
 NODE_ENV = "production"
