@@ -1,30 +1,15 @@
 'use client';
 
 import Banner from "@/components/Banner";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle2, Sparkles, Bot, QrCode, ChartBar, ShieldCheck, Users, Clock, DollarSign, Phone } from "lucide-react";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  LineChart,
-  Line,
-  CartesianGrid,
-} from "recharts";
+import { Bot, QrCode, Phone } from "lucide-react";
 
 // ---------- helpers ----------
 const fadeUp = {
@@ -32,7 +17,15 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
 
-const Section = ({ id, title, eyebrow, children, description }: any) => (
+interface SectionProps {
+  id: string;
+  title: string;
+  eyebrow?: string;
+  children: React.ReactNode;
+  description?: string;
+}
+
+const Section = ({ id, title, eyebrow, children, description }: SectionProps) => (
   <section id={id} className="py-14 lg:py-20">
     <div className="container mx-auto max-w-7xl px-6">
       <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={fadeUp}>
@@ -47,53 +40,25 @@ const Section = ({ id, title, eyebrow, children, description }: any) => (
   </section>
 );
 
-// ---------- data ----------
-const competitorRows = [
-  { name: "Competitor A", qrMenu: true, voiceAI: false, analytics: "Basic", price: "$$", region: "EU/US" },
-  { name: "Competitor B", qrMenu: true, voiceAI: true, analytics: "Limited", price: "$$$", region: "US" },
-  { name: "Competitor C", qrMenu: false, voiceAI: true, analytics: "None", price: "$$", region: "APAC" },
-  { name: "We (NovaDine.AI)", qrMenu: true, voiceAI: true, analytics: "Advanced+", price: "Custom", region: "Global" },
-];
-
-const kpiChartData = [
-  { metric: "Order Time", Legacy: 7.8, NovaAI: 3.1 },
-  { metric: "Avg Ticket $", Legacy: 17.5, NovaAI: 20.9 },
-  { metric: "Table Turnover", Legacy: 1.0, NovaAI: 1.35 },
-  { metric: "CSAT", Legacy: 78, NovaAI: 92 },
-];
-
-const monthlyCostChart = [
-  { label: "1 Store", Human: 5200, AI: 1400 },
-  { label: "5 Stores", Human: 26000, AI: 5300 },
-  { label: "10 Stores", Human: 52000, AI: 9800 },
-];
-
-const features = [
-  { icon: ShieldCheck, title: "Enterprise-Grade Security", desc: "ISO-ready processes, field‑tested edge devices, end‑to‑end encryption, SSO, audit logs." },
-  { icon: Sparkles, title: "Production AI", desc: "On‑device wake‑word, multi‑turn dialog, multilingual STT/TTS, robust fallback flows." },
-  { icon: ChartBar, title: "Full‑Stack Analytics", desc: "Menu performance, allergen safety, upsell efficiency, cohort & heatmap reports." },
-  { icon: Clock, title: "Fast Rollout", desc: "Pilot in 2 weeks, chain‑wide deployment in 30–60 days with playbooks and L3 support." },
-];
-
 // ---------- main component ----------
 export default function Site() {
-  const [roi, setRoi] = useState({
-    monthlyCovers: 15000, // per location
-    avgWage: 14, // $/hr
+  const roi = {
+    monthlyCovers: 15000,
+    avgWage: 14,
     waiterPerShift: 3,
     shiftsPerDay: 2,
     days: 30,
-    aiLic: 799, // $/mo/location
-    upsellLift: 0.12, // 12%
+    aiLic: 799,
+    upsellLift: 0.12,
     avgTicket: 18,
-  });
+  };
 
   const { humanCost, aiCost, upsellGain, netSavings, paybackDays } = useMemo(() => {
-    const humanMonthly = roi.avgWage * (roi.waiterPerShift * 8) * roi.shiftsPerDay * roi.days; // 8h shifts
-    const aiMonthly = roi.aiLic; // simplified
-    const upsell = roi.monthlyCovers * roi.avgTicket * roi.upsellLift; // extra revenue
-    const savings = humanMonthly - aiMonthly + upsell; // ignoring COGS for simplicity
-    const payback = savings > 0 ? Math.max(7, Math.round((aiMonthly / savings) * 30)) : 0; // days
+    const humanMonthly = roi.avgWage * (roi.waiterPerShift * 8) * roi.shiftsPerDay * roi.days;
+    const aiMonthly = roi.aiLic;
+    const upsell = roi.monthlyCovers * roi.avgTicket * roi.upsellLift;
+    const savings = humanMonthly - aiMonthly + upsell;
+    const payback = savings > 0 ? Math.max(7, Math.round((aiMonthly / savings) * 30)) : 0;
     return {
       humanCost: humanMonthly,
       aiCost: aiMonthly,
@@ -103,7 +68,6 @@ export default function Site() {
     };
   }, [roi]);
 
-  // Fixed-locale number formatter to avoid SSR/CSR mismatch (e.g., 20,160 vs 20.160)
   const nf = useMemo(() => new Intl.NumberFormat('en-US'), []);
 
   return (
@@ -122,6 +86,7 @@ export default function Site() {
             <a href="#qr" className="hover:text-primary">QR Menü</a>
             <a href="#waiter" className="hover:text-primary">Yapay Zeka Garson</a>
             <a href="#analysis" className="hover:text-primary">Analizler</a>
+            <a href="/waitlist" className="hover:text-primary">Bekleme Listesi</a>
             <a href="#contact" className="hover:text-primary">Teklif Al</a>
           </nav>
           <Button asChild>
@@ -131,25 +96,6 @@ export default function Site() {
       </header>
 
       <Banner />
-      {/* HERO
-      <section className="relative overflow-hidden bg-gradient-to-r from-primary/10 via-background to-background">
-        <div className="container mx-auto max-w-7xl px-6 pt-20 pb-16 grid lg:grid-cols-2 gap-8 items-center">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <Badge variant="outline" className="mb-3">Restoran Zincirleri için Üretken Yapay Zeka</Badge>
-            <h1 className="text-5xl font-bold leading-tight tracking-tight">
-              Daha Hızlı Servis, Daha Yüksek Sepet: <span className="text-primary">Garsonsuz</span> Gelecek
-            </h1>
-            <p className="mt-4 text-lg text-muted-foreground max-w-xl">
-              NovaDine.AI; zincir restoranlar için QR menü, konuşan sipariş asistanı ve ileri analitik sunar.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button asChild size="lg"><a href="#contact">Fiyat & Demo</a></Button>
-              <Button asChild variant="secondary" size="lg"><a href="#services">Tüm Hizmetler</a></Button>
-            </div>
-          </motion.div>
-        </div>
-      </section> */}
-
 
       {/* FEATURES */}
       <Section id="services" eyebrow="Hizmet Kataloğu" title="Ayrı Projelerimiz" description="Her modül bağımsız olarak alınabilir; birlikte kullanıldığında zincir gücünü artırır.">
@@ -248,6 +194,7 @@ export default function Site() {
           <div className="flex items-center gap-4 text-sm">
             <a href="#services" className="hover:text-primary">Hizmetler</a>
             <a href="#analysis" className="hover:text-primary">Analizler</a>
+            <a href="/waitlist" className="hover:text-primary">Bekleme Listesi</a>
             <a href="#contact" className="hover:text-primary">İletişim</a>
           </div>
         </div>

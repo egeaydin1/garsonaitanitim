@@ -1,0 +1,211 @@
+{
+  "name": "Garsonai_waitlist_webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "garsonai-waitlist",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [240, 300],
+      "id": "webhook-trigger",
+      "name": "Webhook - Waitlist Form",
+      "webhookId": "5ec06b5e-6535-4cb5-bf5f-1d680d54c2b1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "14VMIreLdxIIH3rK4FX93HYQbvcH48I6Z5vCicwoKieA",
+          "mode": "list",
+          "cachedResultName": "Waitlist Garsonai",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14VMIreLdxIIH3rK4FX93HYQbvcH48I6Z5vCicwoKieA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 121791139,
+          "mode": "list",
+          "cachedResultName": "Sayfa1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14VMIreLdxIIH3rK4FX93HYQbvcH48I6Z5vCicwoKieA/edit#gid=121791139"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "İletişim kişisi": "={{ $json.body[\"İletişim kişisi\"] }}",
+            "İşletme adı": "={{ $json.body[\"İşletme adı\"] }}",
+            "Telefon Numaranız": "={{ $json.body[\"Telefon Numaranız\"] }}",
+            "İşletme türünüz nedir?": "={{ $json.body[\"İşletme türünüz nedir?\"] }}",
+            "Kaç masa/müşteri kapasitesine sahipsiniz?": "={{ $json.body[\"Kaç masa/müşteri kapasitesine sahipsiniz?\"] }}",
+            "Ayda ortalama ne kadar teknoloji/yazılım harcaması yapıyorsunuz?": "={{ $json.body[\"Ayda ortalama ne kadar teknoloji/yazılım harcaması yapıyorsunuz?\"] }}",
+            "Bu sistemden beklediğiniz fayda nedir?": "={{ $json.body[\"Bu sistemden beklediğiniz fayda nedir? (2 tane seçin)\"] }}",
+            "Hangi yapay zeka özellikleri size en çekici geliyor?": "={{ $json.body[\" Hangi yapay zeka özellikleri size en çekici geliyor?\"] }}",
+            "Düşünceleriniz": "={{ $json.body[\"Düşünceleriniz\"] }}",
+            "Gönderim Zamanı": "={{ $json.body.submittedAt }}",
+            "Form Modu": "={{ $json.body.formMode }}"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [460, 300],
+      "id": "google-sheets-append",
+      "name": "Google Sheets - Append Row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TcFjZZsM7Tc3YzYq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"message\": \"Kaydınız başarıyla alındı!\", \"timestamp\": $now } }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [680, 300],
+      "id": "respond-success",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              },
+              "leftValue": "={{ $json.body[\"İletişim kişisi\"] }}",
+              "rightValue": ""
+            },
+            {
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              },
+              "leftValue": "={{ $json.body[\"İşletme adı\"] }}",
+              "rightValue": ""
+            },
+            {
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              },
+              "leftValue": "={{ $json.body[\"Telefon Numaranız\"] }}",
+              "rightValue": ""
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [240, 480],
+      "id": "validation-check",
+      "name": "Validation Check"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": false, \"error\": \"Zorunlu alanlar eksik!\", \"timestamp\": $now } }}",
+        "responseCode": 400,
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [460, 480],
+      "id": "respond-error",
+      "name": "Respond Error"
+    }
+  ],
+  "connections": {
+    "Webhook - Waitlist Form": {
+      "main": [
+        [
+          {
+            "node": "Validation Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validation Check": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Append Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - Append Row": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "updated-webhook-version",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f2fac00bc62168d0e9e26244955ff4e70f97861c85758b5ef233ec6bce5f4dfc"
+  },
+  "id": "gm4v1Gc95lSmurOS",
+  "tags": []
+}
