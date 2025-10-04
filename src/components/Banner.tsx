@@ -13,15 +13,14 @@ const COUNTERS: CounterSpec[] = [
 ];
 
 export default function Banner() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const statsRef = useRef<HTMLDivElement | null>(null);
-  const heroRef = useRef<HTMLElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   const headlineTop = "Restoranınızı";
   const headlineHi = "Geleceğe";
   const headlineBottom = "Taşıyan AI Teknolojisi";
 
-  // Particles (canvas) — only on client
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -75,7 +74,6 @@ export default function Banner() {
     };
   }, []);
 
-  // Parallax on scroll (subtle)
   useEffect(() => {
     const el = heroRef.current;
     if (!el) return;
@@ -87,7 +85,6 @@ export default function Banner() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Counters when in view
   useEffect(() => {
     const container = statsRef.current;
     if (!container) return;
@@ -117,17 +114,16 @@ export default function Banner() {
     return () => observer.disconnect();
   }, []);
 
-  // Util to split text into spans with stagger
   const split = (text: string, startDelay = 0.1) =>
-  text.split("").map((ch, i) => (
-    <span
-      key={i}
-      className="letter bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent drop-shadow"
-      style={{ animationDelay: `${startDelay + i * 0.06}s` }}
-    >
-      {ch}
-    </span>
-  ));
+    text.split("").map((ch, i) => (
+      <span
+        key={i}
+        className="letter bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent drop-shadow"
+        style={{ animationDelay: `${startDelay + i * 0.06}s` }}
+      >
+        {ch}
+      </span>
+    ));
 
   const badge = useMemo(() => (
     <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-3 py-1 text-white/90 backdrop-blur-md text-[13px] font-medium animate-fadeUp">
@@ -138,14 +134,12 @@ export default function Banner() {
 
   return (
     <section className="relative min-h-[80vh] md:min-h-[92vh] overflow-hidden bg-gradient-to-br from-primary to-primary/80" aria-label="Hero">
-      {/* background decorative blobs */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="absolute left-[-10%] top-[20%] h-72 w-72 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute right-[-10%] top-[5%] h-72 w-72 rounded-full bg-white/20 blur-3xl" />
         <div className="absolute left-[30%] bottom-[10%] h-72 w-72 rounded-full bg-blue-300/10 blur-3xl" />
       </div>
 
-      {/* particles canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 -z-0 pointer-events-none" />
 
       <div ref={heroRef} className="relative z-10 container mx-auto max-w-7xl px-6 pt-20 md:pt-28 pb-16 md:pb-24 text-center">
@@ -157,8 +151,7 @@ export default function Banner() {
           </span>
 
           <span className="block mx-2">
-            <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent drop-shadow
-                            block text-[clamp(2.8rem,7.2vw,5.8rem)]">
+            <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent drop-shadow block text-[clamp(2.8rem,7.2vw,5.8rem)]">
               {split(" " + headlineHi + " ", 1.2)}
             </span>
           </span>
