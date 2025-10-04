@@ -25,10 +25,14 @@ export default function Banner() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d')!;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
     let raf = 0;
 
     function setSize() {
+      if (!canvas) return;
       canvas.width = window.innerWidth;
       canvas.height = Math.max(540, window.innerHeight * 0.9);
     }
@@ -45,6 +49,7 @@ export default function Banner() {
     }));
 
     const draw = () => {
+      if (!canvas || !ctx) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles.forEach(p => {
         p.x += p.vx; p.y += p.vy;
@@ -134,7 +139,7 @@ export default function Banner() {
   return (
     <section className="relative min-h-[80vh] md:min-h-[92vh] overflow-hidden bg-gradient-to-br from-primary to-primary/80" aria-label="Hero">
       {/* background decorative blobs */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="absolute left-[-10%] top-[20%] h-72 w-72 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute right-[-10%] top-[5%] h-72 w-72 rounded-full bg-white/20 blur-3xl" />
         <div className="absolute left-[30%] bottom-[10%] h-72 w-72 rounded-full bg-blue-300/10 blur-3xl" />
