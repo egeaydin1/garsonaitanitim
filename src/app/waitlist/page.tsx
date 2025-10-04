@@ -72,10 +72,22 @@ export default function WaitlistPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Webhook URL kontrolü
+    const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL;
+    
+    if (!webhookUrl) {
+      alert('Webhook URL tanımlanmamış. Lütfen sistem yöneticisiyle iletişime geçin.');
+      console.error('NEXT_PUBLIC_N8N_WEBHOOK_URL is not defined');
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || '/api/waitlist', {
+      console.log('Sending to webhook:', webhookUrl);
+      
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,10 +113,12 @@ export default function WaitlistPage() {
           router.push('/');
         }, 3000);
       } else {
+        const errorText = await response.text();
+        console.error('Response error:', errorText);
         alert('Form gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Fetch error:', error);
       alert('Bir hata oluştu. Lütfen internet bağlantınızı kontrol edin.');
     } finally {
       setIsSubmitting(false);
