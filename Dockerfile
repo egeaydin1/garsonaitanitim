@@ -11,6 +11,11 @@ RUN npm ci
 # Builder
 FROM base AS builder
 WORKDIR /app
+
+# Build-time environment variables
+ARG NEXT_PUBLIC_N8N_WEBHOOK_URL
+ENV NEXT_PUBLIC_N8N_WEBHOOK_URL=$NEXT_PUBLIC_N8N_WEBHOOK_URL
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
@@ -27,7 +32,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy necessary files for standalone
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
